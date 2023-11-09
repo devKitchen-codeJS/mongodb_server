@@ -17,17 +17,16 @@ module.exports.createTicket = async function (req, res) {
     },
   } = req;
   try {
-    console.log(
-      code,
-      place_type,
-      airport_id_from,
-      airport_id_to,
-      from_city,
-      to_city,
-      price
-    );
-    // const findedCountry = await CountrySchema.findById(id);
-    // console.log(findedCountry);
+    // console.log(
+    //   code,
+    //   place_type,
+    //   airport_id_from,
+    //   airport_id_to,
+    //   from_city,
+    //   to_city,
+    //   price
+    // );
+  
     const createdTicket = await TicketSchema.create({
       code: code,
       place_type: place_type,
@@ -90,9 +89,9 @@ module.exports.updateTicket = async function (req, res) {
   } = req;
   console.log(data, id);
   try {
-    const updatedCity = await CitySchema.findOneAndUpdate(
+    const updatedCity = await TicketSchema.findOneAndUpdate(
       { _id: id },
-      { $set: { name: data.name } }
+      { $set: { code: data.code } }
     );
 
     console.log(updatedCity);
@@ -106,14 +105,10 @@ module.exports.updateTicket = async function (req, res) {
 
 module.exports.useTransaction = async function (req, res) {
   const session = await mongoose.startSession();
-  // const test = function (){}
   return (
     CustomerSchema.createCollection()
       .then(() => CustomerSchema.startSession())
-      // The `withTransaction()` function's first parameter is a function
-      // that returns a promise.
       .then((_session) => {
-        // session = _session;
         return session.withTransaction(() => {
           return CustomerSchema.create([{ name: "Test" }], {
             session: session,
@@ -124,9 +119,7 @@ module.exports.useTransaction = async function (req, res) {
         const t = await  CustomerSchema.find({})
         console.log('t', t) 
       })
-    //   .then((count) => assert.strictEqual(count, 1))
       .then(() => session.endSession())
       .then(() => res.status(200).json({message: 'DDONE'}))
   );  
-//   res.status(200)
 };
